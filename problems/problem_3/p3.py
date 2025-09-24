@@ -82,35 +82,29 @@ def huffman_compress(all_rle_symbols):
     # 3. Traverse the tree to generate Huffman codes. A recursive helper function is a good approach.
     # 4. Encode the `all_rle_symbols` list into a single bitstring using your generated codes.
     
-    huffman_codes = {}
-    encoded_data = ""
     freq = collections.Counter(all_rle_symbols)
-
     pq = []
     counter = 0
 
     for symbol, frequency in freq.items():
         heapq.heappush(pq, (frequency, counter, symbol))
-        counter = counter + 1
-    
+        counter += 1
+
     if len(pq) == 1:
-        symbol = list(freq)[0]
-        return {symbol: '0'}, '0' * len(all_rle_symbols)
-    else:
+        symbol = list(freq.keys())[0]
+        return {symbol: "0"}, "0" * len(all_rle_symbols)
+
+    while len(pq) > 1:
         freq1, count1, left = heapq.heappop(pq)
         freq2, count2, right = heapq.heappop(pq)
-        
-        freq_tgt = freq1 + freq2
-        tgt = (left, right)
-        heapq.heappush(pq, (freq_tgt, counter, tgt))
-        counter = counter + 1
+        merged = (left, right)
+        heapq.heappush(pq, (freq1 + freq2, counter, merged))
+        counter += 1
 
-    f, c, r = pq[0]
+    _, _, root = pq[0]
+    huffman_codes = {}
+    generate(root)
 
-    generate(r)
-
-    for i in all_rle_symbols:
-        encoded_data = encoded_data + huffman_codes[i]
-
+    encoded_data = "".join(huffman_codes[sym] for sym in all_rle_symbols)
 
     return huffman_codes, encoded_data
