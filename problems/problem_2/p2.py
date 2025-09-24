@@ -16,15 +16,18 @@ def interval_covering(M: int, intervals: list) -> list:
 
     while current_end < M:
         best_end = current_end
+        best_interval = None
+        
         while i < n and intervals[i][0] <= current_end:
-            best_end = max(best_end, intervals[i][1])
+            if intervals[i][1] > best_end:
+                best_end = intervals[i][1]
+                best_interval = intervals[i]
             i += 1
 
-        if best_end == current_end:
+        if best_interval is None:
             return []
 
-        result.append((current_end, best_end))
+        result.append(best_interval)
         current_end = best_end
 
     return result
-    
