@@ -7,14 +7,24 @@ output: List of list of integers composing the covering.
 TODO: implement a correct greedy algorithm from the homework.
 '''
 def interval_covering(M: int, intervals: list) -> list:
-    intervals = sorted(intervals, key=lambda x: x[1])
+    intervals.sort(key=lambda x: (x[0], -x[1]))
+    
     result = []
-    ending = float("-inf")
+    i = 0
+    n = len(intervals)
+    current_end = 0
 
-    for start, end in intervals:
-        if start >= ending:
-            result.append((start, end))
-            ending = end
+    while current_end < M:
+        best_end = current_end
+        while i < n and intervals[i][0] <= current_end:
+            best_end = max(best_end, intervals[i][1])
+            i += 1
+
+        if best_end == current_end:
+            return []
+
+        result.append((current_end, best_end))
+        current_end = best_end
 
     return result
     
