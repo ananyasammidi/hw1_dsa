@@ -87,7 +87,7 @@ def huffman_compress(all_rle_symbols):
     counter = 0
 
     for symbol, frequency in freq.items():
-        heapq.heappush(pq, (frequency, counter, symbol))
+        heapq.heappush(pq, (frequency, counter, Node(symbol, frequency)))
         counter += 1
 
     if len(pq) == 1:
@@ -95,16 +95,16 @@ def huffman_compress(all_rle_symbols):
         return {symbol: "0"}, "0" * len(all_rle_symbols)
 
     while len(pq) > 1:
-        freq1, count1, left = heapq.heappop(pq)
-        freq2, count2, right = heapq.heappop(pq)
-        merged = (left, right)
-        heapq.heappush(pq, (freq1 + freq2, counter, merged))
+        freq1, count1, left_node = heapq.heappop(pq)
+        freq2, count2, right_node = heapq.heappop(pq)
+        merged_node = Node(None, freq1 + freq2, left_node, right_node)
+        heapq.heappush(pq, (merged_node.freq, counter, merged_node))
         counter += 1
 
-    _, _, root = pq[0]
+    f, c, root = pq[0]
     huffman_codes = {}
     generate(root)
 
-    encoded_data = "".join(huffman_codes[sym] for sym in all_rle_symbols)
+    encoded_data = "".join(huffman_codes[symbol] for symbol in all_rle_symbols)
 
     return huffman_codes, encoded_data
