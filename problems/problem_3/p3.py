@@ -61,13 +61,12 @@ def huffman_compress(all_rle_symbols):
             - A dictionary mapping each unique RLE symbol to its Huffman code (binary string).
             - The fully encoded data as a single binary string.
     """
-    def generate(root, code=""):
-        if not isinstance(root, tuple):
-            huffman_codes[root] = code or '0'
+    def generate(node, code=""):
+        if node.left is None and node.right is None:  # Leaf node
+            huffman_codes[node.symbol] = code or "0"
         else:
-            left, right = root
-            generate(left, code+'0')
-            generate(right, code+'1')
+            generate(node.left, code + "0")
+            generate(node.right, code + "1")
     
     if not all_rle_symbols:
         return {}, ""
